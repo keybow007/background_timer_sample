@@ -9,7 +9,8 @@ class HomeScreen extends StatelessWidget {
       builder: (context, model, child) {
         final isTimerRunning = model.isTimerRunning;
         final displayTimeSeconds = model.displayTimeSeconds;
-        print("timer: ${displayTimeSeconds.toString()}");
+        final isPause = model.isPause;
+        //print("timer: ${displayTimeSeconds.toString()}");
         return Scaffold(
           floatingActionButton: (isTimerRunning)
               ? Container()
@@ -23,12 +24,14 @@ class HomeScreen extends StatelessWidget {
               children: [
                 IconButton(
                   iconSize: 240.0,
-                  icon: (isTimerRunning)
+                  icon: (isTimerRunning && !isPause)
                       ? Icon(Icons.pause_circle_outline)
                       : Icon(Icons.play_circle_outline),
-                  onPressed: (isTimerRunning)
-                      ? () => _stop(context)
-                      : () => _start(context),
+                  onPressed: (isTimerRunning && !isPause)
+                      ? () => _pause(context)
+                      : (!isTimerRunning)
+                          ? () => _start(context)
+                          : () => _resume(context),
                 ),
                 SizedBox(
                   height: 8.0,
@@ -50,13 +53,18 @@ class HomeScreen extends StatelessWidget {
     viewModel.clear();
   }
 
-  _stop(BuildContext context) {
+  _pause(BuildContext context) {
     final viewModel = context.read<HomeViewModel>();
-    viewModel.stop();
+    viewModel.pause();
   }
 
   _start(BuildContext context) {
     final viewModel = context.read<HomeViewModel>();
     viewModel.start();
+  }
+
+  _resume(BuildContext context) {
+    final viewModel = context.read<HomeViewModel>();
+    viewModel.resume();
   }
 }
